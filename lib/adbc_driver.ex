@@ -83,25 +83,29 @@ defmodule Adbc.Driver do
   end
 
   defp driver_wheel(driver_name, version, triplet) do
-    case triplet do
-      "aarch64-apple-darwin" ->
+    case {triplet, driver_name} do
+      {"aarch64-apple-darwin", _} ->
         {:ok, "adbc_driver_#{driver_name}-#{version}-py3-none-macosx_11_0_arm64.whl"}
 
-      "x86_64-apple-darwin" ->
+      {"x86_64-apple-darwin", _} ->
         {:ok, "adbc_driver_#{driver_name}-#{version}-py3-none-macosx_10_9_x86_64.whl"}
 
-      "aarch64-linux-gnu" ->
+      {"aarch64-linux-gnu", _} ->
         {:ok,
          "adbc_driver_#{driver_name}-#{version}-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"}
 
-      "x86_64-linux-gnu" ->
+      {"x86_64-linux-gnu", :snowflake} ->
+        {:ok,
+         "adbc_driver_#{driver_name}-#{version}-py3-none-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl"}
+
+      {"x86_64-linux-gnu", _} ->
         {:ok,
          "adbc_driver_#{driver_name}-#{version}-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"}
 
-      "x86_64-windows-msvc" ->
+      {"x86_64-windows-msvc", _} ->
         {:ok, "adbc_driver_#{driver_name}-#{version}-py3-none-win_amd64.whl"}
 
-      _ ->
+      {_, _} ->
         {:error, "official driver does not have a precompiled version for `#{triplet}`"}
     end
   end
